@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://likemirage.github.io/Tiance-roles/schemas/role-market-index.schema.json",
+  "title": "Tiance Role Market Index",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "kind", "name", "updatedAt", "roles"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "kind": { "const": "tiance-role-market" },
+    "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "roles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "version", "author", "summary", "license", "packageUrl", "sha256", "size", "compatibility"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,63}$" },
+          "name": { "type": "string", "minLength": 1, "maxLength": 80 },
+          "version": { "type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?$" },
+          "author": { "type": "string", "minLength": 1, "maxLength": 80 },
+          "summary": { "type": "string", "minLength": 1, "maxLength": 300 },
+          "license": { "type": "string", "minLength": 1, "maxLength": 80 },
+          "packageUrl": { "type": "string", "format": "uri-reference" },
+          "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "size": { "type": "integer", "minimum": 1 },
+          "compatibility": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["minTianceVersion"],
+            "properties": {
+              "minTianceVersion": { "type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?$" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

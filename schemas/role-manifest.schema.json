@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://likemirage.github.io/Tiance-roles/schemas/role-manifest.schema.json",
+  "title": "Tiance Role Package Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "kind", "id", "name", "version", "author", "summary", "license", "compatibility"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "kind": { "const": "tiance-role-package" },
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,63}$" },
+    "name": { "type": "string", "minLength": 1, "maxLength": 80 },
+    "version": { "type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?$" },
+    "author": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name"],
+      "properties": { "name": { "type": "string", "minLength": 1, "maxLength": 80 } }
+    },
+    "summary": { "type": "string", "minLength": 1, "maxLength": 300 },
+    "license": { "type": "string", "minLength": 1, "maxLength": 80 },
+    "compatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minTianceVersion"],
+      "properties": {
+        "minTianceVersion": { "type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?$" }
+      }
+    }
+  }
+}
+
