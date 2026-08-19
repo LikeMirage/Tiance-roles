@@ -59,11 +59,12 @@ def _write_role(root: Path) -> None:
         "generation.json": {"temperature": None, "top_p": None, "max_output_tokens": 4096},
         "prompt.json": {"system_prompt": "Test"},
         "response.json": {
-            "return_thinking_content": True,
             "return_cancelled_messages": True,
             "return_user_before_cancelled": True,
             "streaming_enabled": True,
             "auto_collapse_assistant_process": False,
+            "malformed_tool_call_recovery_enabled": True,
+            "upstream_retry_count": 1,
         },
         "context.json": {"inject_message_timestamps": False},
         "memory.json": {

@@ -94,10 +94,12 @@ def _validate_configs(root: Path) -> None:
     _require_type(prompt["system_prompt"], str, f"{role_id} 的 system_prompt 非法。")
 
     response = _read_exact(root / "response.json", {
-        "return_thinking_content", "return_cancelled_messages", "return_user_before_cancelled",
+        "return_cancelled_messages", "return_user_before_cancelled",
         "streaming_enabled", "auto_collapse_assistant_process",
+        "malformed_tool_call_recovery_enabled", "upstream_retry_count",
     })
-    _require_booleans(response, role_id)
+    _require_booleans(response, role_id, exclude={"upstream_retry_count"})
+    _require_int(response["upstream_retry_count"], 0, f"{role_id} 的上游重试次数非法。")
 
     context = _read_exact(root / "context.json", {"inject_message_timestamps"})
     _require_booleans(context, role_id)
