@@ -115,11 +115,17 @@ def _validate_configs(root: Path) -> None:
     _require_int(memory["memory_context_token_trigger_threshold"], 1, f"{role_id} 的记忆阈值非法。")
     _require_int(memory["memory_raw_context_token_reserve"], 0, f"{role_id} 的记忆保留量非法。")
 
-    tools = _read_exact(root / "tools.json", {"tools_enabled", "enabled_tool_names", "max_tool_calls"})
+    tools = _read_exact(root / "tools.json", {
+        "tools_enabled", "enabled_tool_names", "max_tool_calls", "tool_approval_mode",
+    })
     require(type(tools["tools_enabled"]) is bool, f"{role_id} 的 tools_enabled 非法。")
     names = tools["enabled_tool_names"]
     require(names is None or (isinstance(names, list) and all(isinstance(item, str) for item in names)), f"{role_id} 的工具列表非法。")
     _require_int(tools["max_tool_calls"], 1, f"{role_id} 的 max_tool_calls 非法。")
+    require(
+        tools["tool_approval_mode"] in {"follow_tool_policy", "auto_allow_ask"},
+        f"{role_id} 的 tool_approval_mode 非法。",
+    )
 
 
 def _read_exact(path: Path, keys: set[str]) -> dict[str, Any]:

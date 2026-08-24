@@ -21,6 +21,19 @@ roles/<role-id>/
 
 角色目录只允许以上九个 JSON 文件。`.Tiance`、会话、状态、缓存、日志、脚本、附件、凭据、用户记忆和本机绝对路径不得进入仓库或角色包。
 
+`tools.json` 保存角色应用到会话时使用的一次性工具预设：
+
+```json
+{
+  "tools_enabled": true,
+  "enabled_tool_names": null,
+  "max_tool_calls": 99999,
+  "tool_approval_mode": "auto_allow_ask"
+}
+```
+
+`tool_approval_mode` 只处理工具权限结果中的“询问”：`follow_tool_policy` 等待用户决定，`auto_allow_ask` 自动允许询问项。工具权限明确禁止的调用不会被角色配置放行。角色配置写入会话后不再参与该会话的后续运行。
+
 ## 发布流程
 
 `python scripts/build_market.py` 会验证所有角色，生成固定版本 ZIP、真实大小、SHA256 和 `dist/index.json`。构建使用稳定排序与固定 ZIP 元数据，同一提交可以重复得到相同产物。

@@ -76,7 +76,12 @@ def _write_role(root: Path) -> None:
             "memory_context_token_trigger_threshold": 24000,
             "memory_raw_context_token_reserve": 12000,
         },
-        "tools.json": {"tools_enabled": False, "enabled_tool_names": None, "max_tool_calls": 8},
+        "tools.json": {
+            "tools_enabled": False,
+            "enabled_tool_names": None,
+            "max_tool_calls": 8,
+            "tool_approval_mode": "auto_allow_ask",
+        },
     }
     for name, payload in payloads.items():
         _write_json(root / name, payload)
