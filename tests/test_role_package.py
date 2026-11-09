@@ -14,6 +14,23 @@ from role_package import MarketBuildError, load_and_validate_role_package  # noq
 
 
 class RolePackageTests(unittest.TestCase):
+    def test_response_parameters_use_current_contract(self) -> None:
+        invalid = {
+            "upstream_retry_interval_seconds": -1,
+            "output_limit_action": "keep_going",
+            "output_limit_max_recoveries": -1,
+            "automatic_naming_enabled": "false",
+        }
+        for key, value in invalid.items():
+            with self.subTest(key=key), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary) / "test-role"
+                _write_role(root)
+                payload = json.loads((root / "response.json").read_text(encoding="utf-8"))
+                payload[key] = value
+                _write_json(root / "response.json", payload)
+                with self.assertRaises(MarketBuildError):
+                    load_and_validate_role_package(root)
+
     def test_valid_role_contract(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary) / "test-role"
@@ -59,8 +76,12 @@ def _write_role(root: Path) -> None:
         "generation.json": {"temperature": None, "top_p": None, "max_output_tokens": 4096},
         "prompt.json": {"system_prompt": "Test"},
         "response.json": {
-            "return_cancelled_messages": True,
-            "return_user_before_cancelled": True,
+            "automatic_naming_enabled": True,
+            "output_limit_action": "send_message",
+            "output_limit_save_partial": True,
+            "output_limit_message": "继续完成任务。",
+            "output_limit_max_recoveries": None,
+            "upstream_retry_interval_seconds": 5,
             "streaming_enabled": True,
             "auto_collapse_assistant_process": False,
             "malformed_tool_call_recovery_enabled": True,

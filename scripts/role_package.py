@@ -94,12 +94,21 @@ def _validate_configs(root: Path) -> None:
     _require_type(prompt["system_prompt"], str, f"{role_id} 的 system_prompt 非法。")
 
     response = _read_exact(root / "response.json", {
-        "return_cancelled_messages", "return_user_before_cancelled",
+        "automatic_naming_enabled", "output_limit_action", "output_limit_save_partial",
+        "output_limit_message", "output_limit_max_recoveries", "upstream_retry_interval_seconds",
         "streaming_enabled", "auto_collapse_assistant_process",
         "malformed_tool_call_recovery_enabled", "upstream_retry_count",
     })
-    _require_booleans(response, role_id, exclude={"upstream_retry_count"})
+    _require_booleans(response, role_id, exclude={
+        "upstream_retry_count", "upstream_retry_interval_seconds", "output_limit_action",
+        "output_limit_message", "output_limit_max_recoveries",
+    })
     _require_int(response["upstream_retry_count"], 0, f"{role_id} 的上游重试次数非法。")
+    _require_int(response["upstream_retry_interval_seconds"], 0, f"{role_id} 的重试间隔非法。")
+    require(response["output_limit_action"] in {"stop", "retry", "send_message"}, f"{role_id} 的输出上限策略非法。")
+    _require_type(response["output_limit_message"], str, f"{role_id} 的输出上限提示词非法。")
+    if response["output_limit_max_recoveries"] is not None:
+        _require_int(response["output_limit_max_recoveries"], 0, f"{role_id} 的恢复次数非法。")
 
     context = _read_exact(root / "context.json", {"inject_message_timestamps"})
     _require_booleans(context, role_id)
